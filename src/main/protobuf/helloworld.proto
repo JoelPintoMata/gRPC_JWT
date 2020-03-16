@@ -9,18 +9,18 @@ option (scalapb.options) = {
 
 package helloworld;
 
-// The greeting service definition.
-service Greeter {
-  // Sends a greeting
-  rpc sayHello (HelloRequest) returns (HelloReply) {}
+// The authenticator service definition.
+service Authenticator {
+  // Sends a authentication request
+  rpc authenticate (AuthenticationRequest) returns (AuthenticationReplyReply) {}
 }
 
-// The request message containing the user's name.
-message HelloRequest {
+// The user's request message.
+message AuthenticationRequest {
   string name = 1;
 }
 
-// The response message containing the greetings
-message HelloReply {
+// The response message containing the authentication result
+message AuthenticationReplyReply {
   string message = 1;
 }

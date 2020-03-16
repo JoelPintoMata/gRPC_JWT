@@ -6,8 +6,8 @@ import io.grpc._
 import pdi.jwt.{Jwt, JwtAlgorithm}
 
 
-class HelloWorldAuthorizationServerInterceptor extends ServerInterceptor {
-  private[this] val logger = Logger.getLogger(classOf[HelloWorldAuthorizationServerInterceptor].getName)
+class AuthenticationServerInterceptor extends ServerInterceptor {
+  private[this] val logger = Logger.getLogger(classOf[AuthenticationServerInterceptor].getName)
 
   def interceptCall[ReqT, RespT](serverCall: ServerCall[ReqT, RespT], metadata: Metadata, serverCallHandler: ServerCallHandler[ReqT, RespT]): ServerCall.Listener[ReqT] = {
     val value = metadata.get(Constants.AUTHORIZATION_METADATA_KEY)
