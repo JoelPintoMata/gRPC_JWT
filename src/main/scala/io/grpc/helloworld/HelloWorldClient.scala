@@ -5,11 +5,9 @@ import java.util.logging.{Level, Logger}
 
 import io.grpc.helloworld.GreeterGrpc.GreeterBlockingStub
 import io.grpc.{ManagedChannel, ManagedChannelBuilder, StatusRuntimeException}
-import io.jsonwebtoken.{Jwts, SignatureAlgorithm}
+import pdi.jwt.{Jwt, JwtAlgorithm}
 
-/**
-  * [[https://github.com/grpc/grpc-java/blob/v0.15.0/examples/src/main/java/io/grpc/examples/helloworld/HelloWorldClient.java]]
-  */
+
 object HelloWorldClient {
   private[this] val logger = Logger.getLogger(classOf[HelloWorldClient].getName)
 
@@ -36,7 +34,7 @@ object HelloWorldClient {
   }
 
   private def getJwt: String = {
-    Jwts.builder.setSubject("GreetingClient").signWith(SignatureAlgorithm.HS256, Constants.JWT_SIGNING_KEY).compact
+    Jwt.encode("Autorization client", Constants.JWT_SIGNING_KEY, JwtAlgorithm.HS256)
   }
 }
 

@@ -13,8 +13,14 @@ libraryDependencies ++= Seq(
   "com.thesamet.scalapb" %% "scalapb-runtime-grpc"  % scalapbVersion,
   // for JSON conversion
   "com.thesamet.scalapb" %% "scalapb-json4s"        % scalapbVersion,
-  // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt
-  "io.jsonwebtoken" % "jjwt" % "0.9.1",
+//  "io.jsonwebtoken" % "jjwt" % "0.9.1",
+  "com.pauldijou" %% "jwt-core" % "4.2.0",
+  "org.json4s" %% "json4s-native" % "3.2.11",
+  "com.auth0" % "jwks-rsa" % "0.11.0",
+  // https://mvnrepository.com/artifact/com.auth0/java-jwt
+  "com.auth0" % "java-jwt" % "3.10.0",
+
+
 )
 
 scalacOptions in ThisBuild ++= Seq("-unchecked", "-deprecation")

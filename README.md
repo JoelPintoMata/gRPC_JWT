@@ -71,3 +71,6 @@ https://www.jsonwebtoken.io
 https://sultanov.dev/blog/securing-java-grpc-services-with-jwt-based-authentication/
 https://github.com/AnarSultanov/examples/search?q=Constants.JWT_SIGNING_KEY&unscoped_q=Constants.JWT_SIGNING_KEY
 https://github.com/avast/grpc-java-jwt
+
+https://github.com/pauldijou/jwt-scala/blob/master/docs/src/main/tut/_includes/tut/jwt-core-jwt.md
+https://www.programcreek.com/scala/pdi.jwt.JwtAlgorithm

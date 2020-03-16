@@ -2,15 +2,11 @@ package io.grpc.helloworld
 
 import java.util.logging.Logger
 
-import com.sun.net.httpserver.Headers
 import io.grpc.{Server, ServerBuilder}
-import io.grpc.helloworld.{GreeterGrpc, HelloReply, HelloRequest}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-/**
-  * [[https://github.com/grpc/grpc-java/blob/v0.15.0/examples/src/main/java/io/grpc/examples/helloworld/HelloWorldServer.java]]
-  */
+
 object HelloWorldServer {
   private val logger = Logger.getLogger(classOf[HelloWorldServer].getName)
 
