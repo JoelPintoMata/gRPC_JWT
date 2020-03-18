@@ -1,10 +1,13 @@
-package io.grpc.helloworld
+package io.grpc.authentication
 
 import java.util.concurrent.TimeUnit
 import java.util.logging.{Level, Logger}
 
-import io.grpc.helloworld.AuthenticatorGrpc.AuthenticatorBlockingStub
-import io.grpc.{ManagedChannel, ManagedChannelBuilder, StatusRuntimeException}
+import io.grpc.authentication.AuthenticatorGrpc
+import io.grpc.authentication.AuthenticatorGrpc.AuthenticatorBlockingStub
+import io.grpc.internal.DnsNameResolverProvider
+import io.grpc.{ManagedChannel, StatusRuntimeException}
+import io.grpc.netty.{NegotiationType, NettyChannelBuilder, NettyChannelProvider}
 import pdi.jwt.{Jwt, JwtAlgorithm}
 
 
@@ -12,9 +15,11 @@ object AuthenticationClient {
   private[this] val logger = Logger.getLogger(classOf[AuthenticationClient].getName)
 
   def apply(host: String, port: Int): AuthenticationClient = {
-    val channel = ManagedChannelBuilder.forAddress(host, port)
-      .usePlaintext(true).
-      build
+    val channel = NettyChannelBuilder.forAddress(host, port)
+      .nameResolverFactory(new DnsNameResolverProvider())
+//      implement TLS
+      .negotiationType(NegotiationType.PLAINTEXT)
+      .build()
 
     val token = BearerToken(getJwt)
     logger.info("Client calling with token: " + token)
@@ -24,7 +29,7 @@ object AuthenticationClient {
   }
 
   def main(args: Array[String]): Unit = {
-    val client = AuthenticationClient("localhost", 50051)
+    val client = AuthenticationClient("172.17.0.1", 50051)
     try {
       val user = args.headOption.getOrElse("world")
       client.authenticate(user)
@@ -45,7 +50,12 @@ class AuthenticationClient private(
   private[this] val logger = Logger.getLogger(classOf[AuthenticationClient].getName)
 
   def shutdown(): Unit = {
-    channel.shutdown.awaitTermination(5, TimeUnit.SECONDS)
+    try {
+      channel.shutdown().awaitTermination(5, TimeUnit.SECONDS)
+    } catch {
+      case e: InterruptedException =>
+        logger.log(Level.SEVERE, "Could not shutdown the channel properly: {0}", e.getMessage)
+    }
   }
 
   def authenticate(name: String): Unit = {

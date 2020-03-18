@@ -1,4 +1,4 @@
-package io.grpc.helloworld
+package io.grpc.authentication
 
 import io.grpc.{Attributes, CallCredentials, Metadata, MethodDescriptor, Status}
 

@@ -1,4 +1,4 @@
-package io.grpc.helloworld
+package io.grpc.authentication
 
 import java.util.logging.Logger
 

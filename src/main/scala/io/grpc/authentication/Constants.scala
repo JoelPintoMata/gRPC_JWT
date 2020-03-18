@@ -1,4 +1,4 @@
-package io.grpc.helloworld
+package io.grpc.authentication
 
 import io.grpc.Context
 import io.grpc.Metadata

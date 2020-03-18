@@ -1,8 +1,10 @@
-package io.grpc.helloworld
+package io.grpc.authentication
 
 import java.util.logging.Logger
 
-import io.grpc.{Server, ServerBuilder}
+import io.grpc.Server
+import io.grpc.authentication.{AuthenticationRequest, AuthenticatorGrpc}
+import io.grpc.netty.NettyServerBuilder
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -23,7 +25,7 @@ class AuthenticationServer(executionContext: ExecutionContext) { self =>
   private[this] var server: Server = null
 
   private def start(): Unit = {
-    server = ServerBuilder
+    server = NettyServerBuilder
       .forPort(AuthenticationServer.port)
       .addService(AuthenticatorGrpc.bindService(new AuthenticationServer(), executionContext))
       .intercept(new AuthenticationServerInterceptor())
@@ -51,7 +53,7 @@ class AuthenticationServer(executionContext: ExecutionContext) { self =>
 
   private class AuthenticationServer extends AuthenticatorGrpc.Authenticator {
     override def authenticate(req: AuthenticationRequest) = {
-      val reply = AuthenticationReplyReply(message = req.name + " : authenticated!")
+      val reply = AuthenticationReply(message = req.name + " : authenticated!")
       Future.successful(reply)
     }
   }

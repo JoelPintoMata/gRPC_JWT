@@ -3,16 +3,16 @@ syntax = "proto3";
 import "scalapb/scalapb.proto";
 
 option (scalapb.options) = {
-  package_name: "io.grpc.helloworld"
+  package_name: "io.grpc.authentication"
   flat_package: true
 };
 
-package helloworld;
+package authentication;
 
 // The authenticator service definition.
 service Authenticator {
   // Sends a authentication request
-  rpc authenticate (AuthenticationRequest) returns (AuthenticationReplyReply) {}
+  rpc authenticate (AuthenticationRequest) returns (AuthenticationReply) {}
 }
 
 // The user's request message.
@@ -21,6 +21,6 @@ message AuthenticationRequest {
 }
 
 // The response message containing the authentication result
-message AuthenticationReplyReply {
+message AuthenticationReply {
   string message = 1;
 }
