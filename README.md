@@ -2,6 +2,10 @@
 
 A scala authentication service based on gRPC
 
+## Whats inside?
+__Server__: the `AuthenticationServer` package contains the grpc server implementation
+__Client__: the `AuthenticationClient` package exemplifies a typical grpc client + a main class responsible for firing "integration tests" against a running service (see bellow how to setup).
+
 ## How to use?
 
 First, run

@@ -1,14 +1,14 @@
 package io.grpc.authentication
 
+import java.time.{LocalDateTime, Period, ZoneOffset}
 import java.util.concurrent.TimeUnit
 import java.util.logging.{Level, Logger}
 
-import io.grpc.authentication.AuthenticatorGrpc
 import io.grpc.authentication.AuthenticatorGrpc.AuthenticatorBlockingStub
 import io.grpc.internal.DnsNameResolverProvider
+import io.grpc.netty.{NegotiationType, NettyChannelBuilder}
 import io.grpc.{ManagedChannel, StatusRuntimeException}
-import io.grpc.netty.{NegotiationType, NettyChannelBuilder, NettyChannelProvider}
-import pdi.jwt.{Jwt, JwtAlgorithm}
+import pdi.jwt.{Jwt, JwtAlgorithm, JwtClaim}
 
 
 object AuthenticationClient {
@@ -17,7 +17,7 @@ object AuthenticationClient {
   def apply(host: String, port: Int): AuthenticationClient = {
     val channel = NettyChannelBuilder.forAddress(host, port)
       .nameResolverFactory(new DnsNameResolverProvider())
-//      implement TLS
+//      TODO implement TLS
       .negotiationType(NegotiationType.PLAINTEXT)
       .build()
 
@@ -31,15 +31,14 @@ object AuthenticationClient {
   def main(args: Array[String]): Unit = {
     val client = AuthenticationClient("172.17.0.1", 50051)
     try {
-      val user = args.headOption.getOrElse("world")
-      client.authenticate(user)
+      client.authenticate(args.headOption.getOrElse("Authenticate me"))
     } finally {
       client.shutdown()
     }
   }
 
   private def getJwt: String = {
-    Jwt.encode("Authorization client", Constants.JWT_SIGNING_KEY, JwtAlgorithm.HS256)
+    Jwt.encode(JwtClaim().withContent("Authentication client"), Constants.JWT_SIGNING_KEY, JwtAlgorithm.HS256)
   }
 }
 
@@ -80,9 +79,29 @@ class AuthenticationClient private(
     }
 
     try {
-      logger.info("Will try to authenticate with wrong")
+      logger.info("Will try to authenticate with wrong token")
       val token = BearerToken("some wrong token")
       val blockingStubAux = blockingStub.withCallCredentials(token)
+      blockingStubAux.authenticate(request)
+    } catch {
+      case e: StatusRuntimeException =>
+        logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus)
+    }
+
+    try {
+      logger.info("Will try to authenticate expired token")
+      logger.info("First, prove that it works")
+      var jwt = Jwt.encode(JwtClaim().withContent("Authentication client"), Constants.JWT_SIGNING_KEY, JwtAlgorithm.HS256)
+      var token = BearerToken(jwt)
+      var blockingStubAux = blockingStub.withCallCredentials(token)
+      val response = blockingStubAux.authenticate(request)
+      logger.log(Level.INFO, "Result: {0}", response)
+
+      logger.info("Now, same token but with expired claim")
+      val clock = LocalDateTime.now().minus(Period.ofDays(1));
+      jwt = Jwt.encode(JwtClaim().withContent("Authentication client").expiresAt(clock.toEpochSecond(ZoneOffset.UTC)), Constants.JWT_SIGNING_KEY, JwtAlgorithm.HS256)
+      token = BearerToken(jwt)
+      blockingStubAux = blockingStub.withCallCredentials(token)
       blockingStubAux.authenticate(request)
     } catch {
       case e: StatusRuntimeException =>

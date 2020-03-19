@@ -6,4 +6,4 @@ EXPOSE 50051
 COPY target/scala-2.12/scala-grpc-helloworld-assembly-0.1.0-SNAPSHOT.jar /
 
 # Start the application
-CMD java -cp scala-grpc-helloworld-assembly-0.1.0-SNAPSHOT.jar io.grpc.helloworld.AuthenticationServer
+CMD java -cp scala-grpc-helloworld-assembly-0.1.0-SNAPSHOT.jar io.grpc.authentication.AuthenticationServer
