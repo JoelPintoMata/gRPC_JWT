@@ -29,7 +29,7 @@ object AuthenticationClient {
   }
 
   def main(args: Array[String]): Unit = {
-    val client = AuthenticationClient("172.17.0.1", 50051)
+    val client = AuthenticationClient(args(0), Integer.valueOf(args(1)))
     try {
       client.authenticate(args.headOption.getOrElse("Authenticate me"))
     } finally {
