@@ -25,7 +25,7 @@ class AuthenticationServerInterceptor extends ServerInterceptor {
     } else {
       val token = value.substring(Constants.BEARER_TYPE.length).trim
 
-      if (!Jwt.isValid(token, Constants.JWT_SIGNING_KEY, Seq(JwtAlgorithm.HS256))) {
+      if (!Jwt.isValid(token, scala.util.Properties.envOrElse("JWT_SIGNING_KEY", ""), Seq(JwtAlgorithm.HS256))) {
         status = Status.UNAUTHENTICATED.withDescription("Invalid token")
         logger.warning("Authentication token:" + token + " failed: " + status)
       }

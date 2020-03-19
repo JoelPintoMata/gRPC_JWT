@@ -38,7 +38,7 @@ object AuthenticationClient {
   }
 
   private def getJwt: String = {
-    Jwt.encode(JwtClaim().withContent("Authentication client"), Constants.JWT_SIGNING_KEY, JwtAlgorithm.HS256)
+    Jwt.encode(JwtClaim().withContent("Authentication client"), scala.util.Properties.envOrElse("JWT_SIGNING_KEY", ""), JwtAlgorithm.HS256)
   }
 }
 
@@ -91,7 +91,7 @@ class AuthenticationClient private(
     try {
       logger.info("Will try to authenticate expired token")
       logger.info("First, prove that it works")
-      var jwt = Jwt.encode(JwtClaim().withContent("Authentication client"), Constants.JWT_SIGNING_KEY, JwtAlgorithm.HS256)
+      var jwt = Jwt.encode(JwtClaim().withContent("Authentication client"), scala.util.Properties.envOrElse("JWT_SIGNING_KEY", ""), JwtAlgorithm.HS256)
       var token = BearerToken(jwt)
       var blockingStubAux = blockingStub.withCallCredentials(token)
       val response = blockingStubAux.authenticate(request)
@@ -99,7 +99,7 @@ class AuthenticationClient private(
 
       logger.info("Now, same token but with expired claim")
       val clock = LocalDateTime.now().minus(Period.ofDays(1));
-      jwt = Jwt.encode(JwtClaim().withContent("Authentication client").expiresAt(clock.toEpochSecond(ZoneOffset.UTC)), Constants.JWT_SIGNING_KEY, JwtAlgorithm.HS256)
+      jwt = Jwt.encode(JwtClaim().withContent("Authentication client").expiresAt(clock.toEpochSecond(ZoneOffset.UTC)), scala.util.Properties.envOrElse("JWT_SIGNING_KEY", ""), JwtAlgorithm.HS256)
       token = BearerToken(jwt)
       blockingStubAux = blockingStub.withCallCredentials(token)
       blockingStubAux.authenticate(request)
